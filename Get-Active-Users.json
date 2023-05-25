@@ -1,0 +1,80 @@
+{
+  "name": "Get Active Users",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/users?state=active&pageSize=100&pageNumber=${input.pageNumber}",
+      "requestType": "GET",
+      "headers": {},
+      "requestTemplate": "${input.rawRequest}"
+    },
+    "response": {
+      "translationMap": {
+        "emails": "$.entities[*].email",
+        "ids": "$.entities[*].id",
+        "pageCount": "$.pageCount",
+        "names": "$.entities[*].name",
+        "divIds": "$.entities[*].division.id"
+      },
+      "translationMapDefaults": {
+        "emails": "[]",
+        "ids": "[]",
+        "pageCount": "0",
+        "names": "[]",
+        "divIds": "[]"
+      },
+      "successTemplate": "{ \"userIds\": ${ids}, \"userEmails\": ${emails}, \"userNames\": ${names},\"pageCount\": ${pageCount},\"divisionIds\": ${divIds} }"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "pageNumber": {
+            "default": "1",
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "type": "object",
+        "properties": {
+          "pageCount": {
+            "type": "integer"
+          },
+          "userNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "userEmails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "divisionIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}
